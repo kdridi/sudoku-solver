@@ -24,7 +24,7 @@ public class App {
 
 		Set<Board> solutions = new HashSet<Board>();
 
-		while (!boards.isEmpty()) {
+		while (solutions.isEmpty() && !boards.isEmpty()) {
 			updateSolutions(boards, solutions);
 		}
 
@@ -46,13 +46,21 @@ public class App {
 					boards.remove(index);
 				}
 				for (Integer index : new ArrayList<Integer>(boards.keySet())) {
-					Board board = boards.remove(index);
-					if (next.size() < 3 && values.containsKey(index)) {
-						for (Integer cell : values.get(index).keySet()) {
-							for (Integer value : values.get(index).get(cell)) {
-								next.put(indexxxxx++, board.cloneBoardAndUpdateValue(true, cell, value));
+					if (next.isEmpty()) {
+						Board board = boards.remove(index);
+						if (values.containsKey(index)) {
+							for (Integer cell : values.get(index).keySet()) {
+								for (Integer value : values.get(index).get(cell)) {
+									Board aaa = board.cloneBoardAndUpdateValue(true, cell, value);
+									if (aaa.isValid()) {
+										next.put(indexxxxx++, aaa);
+										System.out.println(aaa);
+									}
+								}
 							}
 						}
+					} else {
+						break;
 					}
 				}
 				boards.putAll(next);

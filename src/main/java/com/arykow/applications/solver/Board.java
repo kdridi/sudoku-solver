@@ -200,9 +200,11 @@ public class Board {
 		final char[] result = BoardFormatterFactory.newInlineFormatter().format(this).toCharArray();
 		if(normalize) {
 			EmptyInformationsVisitorBuilder.buildEmptyInformations(this).acceptEmptyInformationsVisitor(new EmptyInformationsVisitor() {
+				boolean stop = false;
 				public void visitInformation(Integer length, Integer index, int value) {
-					if(length == 1) {
+					if(!stop && length == 1) {
 						result[index] = String.valueOf(value).charAt(0);
+						stop = true;
 					}
 				}
 			});
