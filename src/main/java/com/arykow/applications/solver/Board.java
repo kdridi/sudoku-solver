@@ -173,13 +173,13 @@ public class Board {
 	}
 
 	public Board cloneBoardAndUpdateValues(boolean normalize, Map<Integer, Integer> values) {
-		Board result = cloneBoard(normalize);
+		Board result = cloneBoard(false);
 		if(values != null) {
 			for (Integer index : values.keySet()) {
 				result.updateValue(index, values.get(index));
 			}
 		}
-		return result;
+		return result.cloneBoard(normalize);
 	}
 
 	private void updateValue(int index, int value) {
