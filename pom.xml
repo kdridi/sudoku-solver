@@ -9,6 +9,16 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<developers>
+		<developer>
+			<id>kdridi</id>
+			<name>Karim DRIDI</name>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:git://github.com/kdridi/sudoku-solver.git</connection>
+		<url>scm:git:git://github.com/kdridi/sudoku-solver.git</url>
+	</scm>
 	<build>
 		<plugins>
 			<plugin>
