@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.arykow.applications</groupId>
 	<artifactId>sudoku-solver</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>solver</name>
 	<url>http://maven.apache.org</url>
