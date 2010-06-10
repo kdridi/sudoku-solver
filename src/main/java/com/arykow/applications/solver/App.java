@@ -12,7 +12,20 @@ public class App {
 
 	public static void main(String[] args) {
 		int index = 0;
-		for (Board board : resolve(new Board(args[0]))) {
+		Set<Board> resolve = resolve(new Board(args[0]));
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		System.out.println("--**********----------------------------------------------------------------------------------");
+		for (Board board : resolve) {
 			System.out.println(board);
 			System.out.println("-- " + (++index) + " ----------------------------------------------------------------------------------");
 		}
@@ -46,7 +59,7 @@ public class App {
 					boards.remove(index);
 				}
 				for (Integer index : new ArrayList<Integer>(boards.keySet())) {
-					if (next.isEmpty()) {
+					if (next.size() < 10) {
 						Board board = boards.remove(index);
 						if (values.containsKey(index)) {
 							for (Integer cell : values.get(index).keySet()) {
@@ -54,13 +67,11 @@ public class App {
 									Board aaa = board.cloneBoardAndUpdateValue(true, cell, value);
 									if (aaa.isValid()) {
 										next.put(indexxxxx++, aaa);
-										System.out.println(aaa);
+										System.out.println(String.format("%09d : %s", next.size(), aaa.createInlineString(false)));
 									}
 								}
 							}
 						}
-					} else {
-						break;
 					}
 				}
 				boards.putAll(next);
@@ -74,7 +85,7 @@ public class App {
 
 			if (informations.isSolved()) {
 				solutions.add(solution);
-			} else if (!informations.isValid()) {
+			} else if (!informations.isValid() || contains(solutions, solution)) {
 				updater.invalids.add(index);
 			} else {
 				final Map<Integer, Set<Integer>> values = new HashMap<Integer, Set<Integer>>();
@@ -92,6 +103,27 @@ public class App {
 
 		updater.update();
 
+	}
+
+	private static boolean contains(Set<Board> solutions, Board solution) {
+		boolean result = false;
+		char[] string = solution.createInlineString(false).toCharArray();
+		for(Board board : solutions) {
+			char[] target = board.createInlineString(false).toCharArray();
+			boolean value = true;
+			for (int index = 0; value && index < string.length; index++) {
+				char src = string[index];
+				char dst = target[index];
+				if(src != ' ') {
+					value = src != dst;
+				}
+			}
+			result = value;
+			if(result) {
+				break;
+			}
+		}
+		return result;
 	}
 
 }

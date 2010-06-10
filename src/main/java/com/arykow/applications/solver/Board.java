@@ -196,7 +196,7 @@ public class Board {
 		return new Board(result);
 	}
 
-	private String createInlineString(boolean normalize) {
+	public String createInlineString(boolean normalize) {
 		final char[] result = BoardFormatterFactory.newInlineFormatter().format(this).toCharArray();
 		if(normalize) {
 			EmptyInformationsVisitorBuilder.buildEmptyInformations(this).acceptEmptyInformationsVisitor(new EmptyInformationsVisitor() {
@@ -229,5 +229,10 @@ public class Board {
 		}
 		return result;
 	}
+
+	public int hashCode() {
+		return createInlineString(false).hashCode() * 53;
+	}
+	
 
 }
