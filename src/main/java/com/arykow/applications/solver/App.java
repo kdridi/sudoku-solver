@@ -1,55 +1,86 @@
 package com.arykow.applications.solver;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Set;
+import java.util.TreeSet;
 
 public class App {
 
 	public static void main(String[] args) {
-		String solution = "1324423124133142";
-
-		System.out.println(new Board(solution));
-
-		String values = "    6 2 9 12  946756 7       65 1 8 8 7   1 5 5 3 47       8 239246  51 1 3 9    ";
-		Board board = new Board(values);
-
-		Board solutions = resolve(board);
-		System.out.println(solutions);
-//		EmptyInformationsVisitorBuilder.buildEmptyInformations(board).acceptEmptyInformationsVisitor(visitor)
-
-		System.out.println(board);
-		System.out.println(values);
-		System.out.println(BoardFormatterFactory.newInlineFormatter().format(board));
-		System.out.println(BoardFormatterFactory.newInlineFormatter().format(board.cloneBoard()));
-		System.out.println(board.cloneBoard().equals(board));
-		System.out.println(BoardGenerator.generateBoard());
-		System.out.println(BoardGenerator.generateBoard());
-		System.out.println(BoardGenerator.generateBoard());
-		System.out.println(BoardGenerator.generateBoard());
-		System.out.println(BoardGenerator.generateBoard());
-		System.out.println(BoardGenerator.generateBoard());
+		for (Board board : resolve(new Board("    6 2 9 12  946756 7       65 1 8 8 7   1 5 5 3 47       8 239246  51 1 3 9    "))) {
+			System.out.println(board);
+		}
 	}
 
-	private static Board resolve(Board board) {
-		Board result = board;
-		EmptyInformations informations = EmptyInformationsVisitorBuilder.buildEmptyInformations(result);
-		if(!informations.isCompleted()) {
-			final Map<Integer, Integer> values = new HashMap<Integer, Integer>();
-			informations.acceptEmptyInformationsVisitor(new EmptyInformationsVisitor() {
-				public void visitInformation(Integer length, Integer index, int value) {
-					if(length == 1) {
-						values.put(index, value);
+	private static Set<Board> resolve(Board board) {
+		Map<Integer, Board> boards = new HashMap<Integer, Board>();
+		boards.put(indexxxxx++, board.cloneBoard(true));
+
+		Set<Board> solutions = new TreeSet<Board>();
+
+		while (!boards.isEmpty()) {
+			updateSolutions(boards, solutions);
+		}
+
+		return solutions;
+	}
+
+	private static int indexxxxx = 0;
+
+	public static void updateSolutions(final Map<Integer, Board> boards, Set<Board> solutions) {
+
+		class Updater {
+
+			private final Collection<Integer> invalids = new ArrayList<Integer>();
+			private final Map<Integer, Map<Integer, Set<Integer>>> values = new HashMap<Integer, Map<Integer, Set<Integer>>>();
+			private final Map<Integer, Board> next = new HashMap<Integer, Board>();
+
+			public void update() {
+				for (Integer index : invalids) {
+					boards.remove(index);
+				}
+				for (Integer index : new ArrayList<Integer>(boards.keySet())) {
+					Board board = boards.remove(index);
+					if (values.containsKey(index)) {
+						for (Integer cell : values.get(index).keySet()) {
+							for (Integer value : values.get(index).get(cell)) {
+								next.put(indexxxxx++, board.cloneBoardAndUpdateValue(true, cell, value));
+							}
+						}
 					}
 				}
-			});
-			if(values.isEmpty()) {
-				result = null;
-			} else {
-				result = resolve(result.cloneBoardAndUpdateValues(values));
+				boards.putAll(next);
 			}
 		}
-		return result;
+		final Updater updater = new Updater();
+
+		for (final int index : boards.keySet()) {
+			Board solution = boards.get(index);
+			EmptyInformations informations = EmptyInformationsVisitorBuilder.buildEmptyInformations(solution);
+
+			if (informations.isSolved()) {
+				solutions.add(solution);
+			} else if (!informations.isValid()) {
+				updater.invalids.add(index);
+			} else {
+				final Map<Integer, Set<Integer>> values = new HashMap<Integer, Set<Integer>>();
+				informations.acceptEmptyInformationsVisitor(new EmptyInformationsVisitor() {
+					public void visitInformation(Integer length, Integer indexx, int value) {
+						if (!values.containsKey(indexx)) {
+							values.put(indexx, new TreeSet<Integer>());
+						}
+						values.get(indexx).add(value);
+					}
+				});
+				updater.values.put(index, values);
+			}
+		}
+
+		updater.update();
+
 	}
 
 }

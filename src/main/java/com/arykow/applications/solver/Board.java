@@ -166,16 +166,18 @@ public class Board {
 		return BoardFormatterFactory.newTableFormatter().format(this);
 	}
 
-	public Board cloneBoardAndUpdateValue(int index, int value) {
+	public Board cloneBoardAndUpdateValue(boolean normalize, int index, int value) {
 		Map<Integer, Integer> values = new HashMap<Integer, Integer>();
 		values.put(index, value);
-		return cloneBoardAndUpdateValues(values);
+		return cloneBoardAndUpdateValues(normalize, values);
 	}
 
-	public Board cloneBoardAndUpdateValues(Map<Integer, Integer> values) {
-		Board result = cloneBoard();
-		for (Integer index : values.keySet()) {
-			result.updateValue(index, values.get(index));
+	public Board cloneBoardAndUpdateValues(boolean normalize, Map<Integer, Integer> values) {
+		Board result = cloneBoard(normalize);
+		if(values != null) {
+			for (Integer index : values.keySet()) {
+				result.updateValue(index, values.get(index));
+			}
 		}
 		return result;
 	}
@@ -184,8 +186,36 @@ public class Board {
 		cells.updateValue(index, value);
 	}
 
-	public Board cloneBoard() {
-		return new Board(BoardFormatterFactory.newInlineFormatter().format(this));
+	public Board cloneBoard(boolean normalize) {
+		String result = createInlineString(false);
+		if(normalize) {
+			for(String next = createInlineString(true); !next.equals(result); next = new Board(result).createInlineString(true)) {
+				result = next;
+			}
+		}
+		return new Board(result);
+	}
+
+	private String createInlineString(boolean normalize) {
+		final char[] result = BoardFormatterFactory.newInlineFormatter().format(this).toCharArray();
+		if(normalize) {
+			EmptyInformationsVisitorBuilder.buildEmptyInformations(this).acceptEmptyInformationsVisitor(new EmptyInformationsVisitor() {
+				public void visitInformation(Integer length, Integer index, int value) {
+					if(length == 1) {
+						result[index] = String.valueOf(value).charAt(0);
+					}
+				}
+			});
+		}
+		return new String(result);
+	}
+	
+	public boolean isSolved() {
+		return EmptyInformationsVisitorBuilder.buildEmptyInformations(this).isSolved();
+	}
+
+	public boolean isValid() {
+		return EmptyInformationsVisitorBuilder.buildEmptyInformations(this).isValid();
 	}
 
 	public boolean equals(Object object) {
@@ -197,4 +227,5 @@ public class Board {
 		}
 		return result;
 	}
+
 }

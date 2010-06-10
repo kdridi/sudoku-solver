@@ -91,7 +91,7 @@ public class EmptyInformationsVisitorBuilder {
 			this.informations = informations;
 		}
 
-		public boolean isCompleted() {
+		public boolean isSolved() {
 			return informations.isEmpty();
 		}
 
@@ -107,6 +107,13 @@ public class EmptyInformationsVisitorBuilder {
 			}
 		}
 
+		public Map<Integer, Map<Integer, Set<Integer>>> getInformations() {
+			return informations;
+		}
+
+		public boolean isValid() {
+			return !informations.containsKey(0);
+		}
 	}
 
 	public static EmptyInformations buildEmptyInformations(final Board board) {
