@@ -11,12 +11,8 @@ import java.util.TreeSet;
 public class App {
 
 	public static void main(String[] args) {
-		// String values =
-		// "    6 2 9 12  946756 7       65 1 8 8 7   1 5 5 3 47       8 239246  51 1 3 9    ";
-		String values = " 1 6 3  52     7    7 58   3     8   6  8  5   2     9   56 3    1     44  8 1 7 ";
-
 		int index = 0;
-		for (Board board : resolve(new Board(values))) {
+		for (Board board : resolve(new Board(args[0]))) {
 			System.out.println(board);
 			System.out.println("-- " + (++index) + " ----------------------------------------------------------------------------------");
 		}
